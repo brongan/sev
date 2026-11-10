@@ -126,7 +126,7 @@ impl Firmware {
         let mut report_response = ReportRsp::default();
 
         // Define a buffer to store the certificates in.
-        let mut certificate_bytes: Vec<u8>;
+        let mut certificate_bytes: Vec<u8> = Vec::new();
 
         // Due to the complex buffer allocation, we will take the ReportReq
         // provided by the caller, and create an extended report request object
@@ -184,15 +184,8 @@ impl Firmware {
             return Ok((report_response.report.to_vec(), None));
         }
 
-        let mut certificates: Vec<CertTableEntry>;
-
-        unsafe {
-            let entries = (ext_report_request.certs_address as *mut HostFFI::types::CertTableEntry)
-                .as_mut()
-                .ok_or(CertError::EmptyCertBuffer)?;
-            certificates = HostFFI::types::CertTableEntry::parse_table(entries)?;
-            certificates.sort();
-        }
+        let mut certificates = HostFFI::types::CertTableEntry::parse_table(&certificate_bytes)?;
+        certificates.sort();
 
         // Return both the Attestation Report, as well as the Cert Table.
         Ok((report_response.report.to_vec(), Some(certificates)))
