@@ -6,14 +6,14 @@ pub mod rsa;
 use super::*;
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 union PubKeys {
     ecc: ecc::PubKey,
     rsa: rsa::PubKey,
 }
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 pub struct PubKey {
     pub usage: Usage,
     pub algo: Algorithm,

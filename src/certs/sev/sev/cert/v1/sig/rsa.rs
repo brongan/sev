@@ -2,9 +2,10 @@
 
 #[cfg(feature = "openssl")]
 use super::*;
+use zerocopy::{FromBytes, Immutable};
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 pub struct Signature([u8; 512]);
 
 impl std::fmt::Debug for Signature {

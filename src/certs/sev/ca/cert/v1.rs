@@ -34,7 +34,7 @@ impl From<Size> for hash::MessageDigest {
 }
 
 #[repr(C, packed)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes)]
 pub struct Data {
     pub kid: [u8; 16],
     pub sid: [u8; 16],

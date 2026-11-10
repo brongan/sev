@@ -9,7 +9,7 @@ use super::*;
 use algo::Algorithm;
 
 #[repr(C)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes, Immutable)]
 pub struct Certificate {
     pub body: body::Body,
     pub sigs: [sig::Signature; 2],

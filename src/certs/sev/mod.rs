@@ -22,6 +22,7 @@ use crate::util::*;
 use util::*;
 
 use crate::parser::{Decoder, Encoder};
+use zerocopy::{FromBytes, Immutable};
 
 use std::{
     convert::*,
@@ -97,7 +98,7 @@ impl<U> PublicKey<U> {
 
 /// Denotes a certificate's usage.
 #[repr(C)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes, Immutable)]
 pub struct Usage(u32);
 
 impl Usage {

@@ -5,7 +5,7 @@ pub mod key;
 use super::*;
 
 #[repr(C, packed)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes, Immutable)]
 pub struct Data {
     pub firmware: crate::firmware::host::Version,
     pub reserved: u16,
@@ -13,7 +13,7 @@ pub struct Data {
 }
 
 #[repr(C, packed)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes, Immutable)]
 pub struct Body {
     pub ver: u32,
     pub data: Data,

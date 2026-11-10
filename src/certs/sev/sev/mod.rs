@@ -13,7 +13,7 @@ use super::*;
 
 /// Denotes the usage of a SEV certificate.
 #[repr(C)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes, Immutable)]
 pub struct Usage(u32);
 
 impl Usage {

@@ -10,18 +10,15 @@ pub mod parser_helper;
 
 use std::{
     io::{Read, Result, Write},
-    mem::{size_of, MaybeUninit},
-    slice::{from_raw_parts, from_raw_parts_mut},
+    mem::size_of,
+    slice::from_raw_parts,
 };
 
+use zerocopy::FromBytes;
+
 pub trait TypeLoad: Read {
-    fn load<T: Sized + Copy>(&mut self) -> Result<T> {
-        #[allow(clippy::uninit_assumed_init)]
-        let mut t = unsafe { MaybeUninit::uninit().assume_init() };
-        let p = &mut t as *mut T as *mut u8;
-        let s = unsafe { from_raw_parts_mut(p, size_of::<T>()) };
-        self.read_exact(s)?;
-        Ok(t)
+    fn load<T: FromBytes>(&mut self) -> Result<T> {
+        T::read_from_io(self)
     }
 }
 
@@ -35,3 +32,28 @@ pub trait TypeSave: Write {
 
 impl<T: Read> TypeLoad for T {}
 impl<T: Write> TypeSave for T {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_load_reads_value() {
+        let mut reader: &[u8] = &[1, 2, 3, 4, 5, 6, 7, 8];
+        let value: [u32; 2] = reader.load().unwrap();
+        assert_eq!(
+            value,
+            [
+                u32::from_ne_bytes([1, 2, 3, 4]),
+                u32::from_ne_bytes([5, 6, 7, 8])
+            ]
+        );
+    }
+
+    #[test]
+    fn test_load_short_input() {
+        let mut reader: &[u8] = &[1, 2, 3];
+        let err = reader.load::<u32>().unwrap_err();
+        assert_eq!(err.kind(), std::io::ErrorKind::UnexpectedEof);
+    }
+}

@@ -20,6 +20,7 @@ use crate::*;
 use std::{convert::TryFrom, mem::MaybeUninit, os::unix::io::AsRawFd, result::Result};
 
 use bitflags::bitflags;
+use zerocopy::FromBytes;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -347,7 +348,7 @@ impl From<u32> for Policy {
 /// Processor.
 #[repr(C)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes)]
 pub struct Session {
     /// Used for deriving a shared secret between the tenant
     /// and the AMD SP.
@@ -385,7 +386,14 @@ pub struct Start {
 
 impl Decoder<()> for Start {
     fn decode(reader: &mut impl Read, _: ()) -> std::io::Result<Self> {
-        reader.load()
+        Ok(Self {
+            policy: Policy {
+                flags: PolicyFlags::from_bits_retain(reader.load()?),
+                minfw: reader.load()?,
+            },
+            cert: reader.load()?,
+            session: reader.load()?,
+        })
     }
 }
 
@@ -462,7 +470,11 @@ pub struct Secret {
 
 impl Decoder<()> for Secret {
     fn decode(reader: &mut impl Read, _: ()) -> std::io::Result<Self> {
-        let header = reader.load()?;
+        let header = Header {
+            flags: HeaderFlags::from_bits_retain(reader.load()?),
+            iv: reader.load()?,
+            mac: reader.load()?,
+        };
         let mut ciphertext = vec![];
         let _ = reader.read_to_end(&mut ciphertext)?;
         Ok(Self { header, ciphertext })
@@ -479,7 +491,7 @@ impl Encoder<()> for Secret {
 /// A measurement of the SEV guest.
 #[repr(C)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes)]
 pub struct Measurement {
     /// The measurement.
     pub measure: [u8; 32],

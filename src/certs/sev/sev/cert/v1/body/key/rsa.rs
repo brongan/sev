@@ -6,7 +6,7 @@ use super::*;
 use openssl::rsa;
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 pub struct PubKey {
     modulus_size: u32,
     pubexp: [u8; 512],

@@ -4,9 +4,10 @@ pub mod group;
 
 #[cfg(feature = "openssl")]
 use super::*;
+use zerocopy::{FromBytes, Immutable};
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 pub struct PubKey {
     g: group::Group,
     x: [u8; 72],

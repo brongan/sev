@@ -7,7 +7,7 @@ use super::*;
 use crate::certs::sev::Usage;
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 union Signatures {
     ecdsa: ecdsa::Signature,
     rsa: rsa::Signature,
@@ -23,7 +23,7 @@ impl Default for Signatures {
 }
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 pub struct Signature {
     usage: Usage,
     algo: Algorithm,

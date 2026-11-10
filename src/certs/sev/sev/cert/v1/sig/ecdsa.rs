@@ -4,6 +4,7 @@
 use {super::*, openssl::ecdsa};
 
 use crate::util::hexline::HexLine;
+use zerocopy::{FromBytes, Immutable};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -15,7 +16,7 @@ const SIG_PIECE_SIZE: usize = std::mem::size_of::<[u8; 72]>();
 /// An ECDSA Signature.
 #[repr(C)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes, Immutable)]
 pub struct Signature {
     #[cfg_attr(feature = "serde", serde(with = "BigArray"))]
     r: [u8; 72],

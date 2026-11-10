@@ -2,9 +2,10 @@
 
 #[cfg(feature = "openssl")]
 use super::*;
+use zerocopy::{FromBytes, Immutable};
 
 #[repr(C)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes, Immutable)]
 pub struct Algorithm(u32);
 
 #[allow(dead_code)]

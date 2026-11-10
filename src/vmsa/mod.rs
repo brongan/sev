@@ -11,6 +11,7 @@ use super::{
 };
 
 use std::{fs, io, mem::size_of};
+use zerocopy::FromBytes;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -52,7 +53,7 @@ const ATTR_W_MASK: u16 = 1 << ATTR_W_SHIFT;
 /// AMD64 Architecture Programmer’s Manual, Volume 2: System Programming
 #[repr(C, packed)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, FromBytes)]
 pub struct VmcbSegment {
     /// Segment selector: documented in Figure 4-3 of the
     /// AMD64 Architecture Programmer’s Manual, Volume 2: System Programming
@@ -74,7 +75,7 @@ pub struct VmcbSegment {
 /// AMD64 Architecture Programmer’s Manual, Volume 2: System Programming
 #[repr(C, packed)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes)]
 pub struct Vmsa {
     /// Extra segment.
     es: VmcbSegment,

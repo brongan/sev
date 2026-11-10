@@ -6,6 +6,7 @@ use crate::firmware::host::State;
 pub use crate::firmware::linux::host::types::PlatformStatusFlags;
 use crate::parser::{Decoder, Encoder};
 use crate::util::{TypeLoad, TypeSave};
+use zerocopy::{FromBytes, Immutable};
 
 #[cfg(feature = "openssl")]
 use std::convert::TryInto;
@@ -38,7 +39,7 @@ const MEASURABLE_BYTES: usize = MNONCE_SIZE + DIGEST_SIZE + POLICY_SIZE;
 /// Information about the SEV platform version.
 #[repr(C)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, FromBytes, Immutable)]
 pub struct Version {
     /// The major version number.
     pub major: u8,
@@ -65,7 +66,7 @@ impl From<u16> for Version {
 /// A description of the SEV platform's build information.
 #[repr(C)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, FromBytes)]
 pub struct Build {
     /// The version information.
     pub version: Version,

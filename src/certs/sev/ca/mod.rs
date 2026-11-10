@@ -12,7 +12,7 @@ use super::*;
 
 /// Denotes the usage of the certificate.
 #[repr(C)]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, FromBytes)]
 pub struct Usage(u32);
 
 impl Usage {

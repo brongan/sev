@@ -15,7 +15,7 @@ use std::mem::size_of;
 
 /// An SEV certificate.
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, FromBytes)]
 pub union Certificate {
     pub(crate) version: u32,
     v1: v1::Certificate,
